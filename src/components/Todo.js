@@ -1,23 +1,72 @@
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import classes from "./todo.module.css";
 
 function Todo() {
-  const [todos, setTodos] = useState([
-    // "Do Your Hindi Home Work",
-    // "Do Your Physics Home Work",
-  ]);
+  const savedTodos = JSON.parse(localStorage.getItem("todos"));
+  const [todos, setTodos] = useState(savedTodos || []);
   const textInput = createRef();
 
+  /**
+   * adding todo through input field
+   */
   const addTodoHandler = () => {
-    setTodos([...todos, textInput.current.value]);
-    // console.log(textInput.current.value);
+    if (textInput.current.value === "") {
+      alert("Input field can't be empty");
+    } else {
+      setTodos([...todos, { id: uuidv4(), text: textInput.current.value }]);
+    }
   };
 
-  const removeTodoHandler = () => {};
+  /**
+   *
+   * adding todo on key enter press
+   */
+  const addingTodoOnEnterKeypress = (e) => {
+    console.log(e.keycode);
+    if (e.keyCode === 13) {
+      addTodoHandler();
+    }
+  };
 
+  /**
+   * removing todos
+   */
+
+  const removeTodoHandler = (item) => {
+    const liToBeDel = item.target.id;
+    const newTodo = todos.filter((task) => {
+      return task.id !== liToBeDel;
+    });
+    setTodos(newTodo);
+  };
+
+  /**
+   * checking if the user has completed the todo or not.
+   */
   const completedTodoHandler = () => {};
 
+  /**
+   * editing todo.
+   */
   const editTodoHanlder = () => {};
+
+  /**
+   * storing todos to local storage
+   */
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  /**
+   *  getting todos from local storage
+   */
+  useEffect(() => {
+    const todos = JSON.parse(localStorage.getItem("todos"));
+    if (todos) {
+      setTodos(todos);
+    }
+  }, []);
 
   return (
     <div>
@@ -26,7 +75,11 @@ function Todo() {
           <u>Todo App</u>
         </h1>
 
-        <input className={classes.input} ref={textInput} />
+        <input
+          className={classes.input}
+          ref={textInput}
+          onKeyPress={addingTodoOnEnterKeypress}
+        />
         <br />
         <br />
         <button
@@ -36,15 +89,13 @@ function Todo() {
           Add Todo
         </button>
         <br />
-
-        {/* <small>*Let's start your day by making Todo's .</small> */}
       </div>
       <div className={classes.todoListDiv}>
         <ol className={classes.orderList}>
-          {todos.map((index) => {
+          {todos.map((task, element) => {
             return (
-              <li className={classes.list}>
-                {index}
+              <li className={classes.list} key={task.id}>
+                {task.text}
                 <span
                   className={classes.checked}
                   onClick={completedTodoHandler}
@@ -52,8 +103,9 @@ function Todo() {
                   ✔
                 </span>
                 <span
+                  id={task.id}
                   className={classes.deleteBttn}
-                  onClick={removeTodoHandler}
+                  onClick={(e) => removeTodoHandler(e)}
                 >
                   🗑
                 </span>
