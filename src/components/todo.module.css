@@ -31,8 +31,9 @@
 
 .todoListDiv {
   margin: 10px auto;
-  /* background: orange; */
   width: 800px;
+  min-height: 300px;
+  max-height: fit-content;
   display: flex;
   border: 2px solid black;
   border-radius: 5px;
@@ -71,4 +72,13 @@
   bottom: -5px;
   cursor: pointer;
   transform: rotate(150deg);
+}
+
+.checked {
+  position: absolute;
+  right: 20%;
+  top: 10%;
+  color: darkgreen;
+  cursor: pointer;
+  font-size: 25px;
 }

@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, createRef } from "react";
 import classes from "./todo.module.css";
 
 function Todo() {
   const [todos, setTodos] = useState([
-    { Task: "Do Your Home Work" },
-    { Task: "Learn new thing" },
-    { Task: "Learn new thing" },
-    { Task: "Learn new thing" },
-    { Task: "Learn new thing" },
-    { Task: "Learn new thing" },
-    { Task: "Learn new thing" },
+    // "Do Your Hindi Home Work",
+    // "Do Your Physics Home Work",
   ]);
+  const textInput = createRef();
+
+  const addTodoHandler = () => {
+    setTodos([...todos, textInput.current.value]);
+    // console.log(textInput.current.value);
+  };
+
+  const removeTodoHandler = () => {};
+
+  const completedTodoHandler = () => {};
+
+  const editTodoHanlder = () => {};
+
   return (
     <div>
       <div className={classes.inputBttnDiv}>
@@ -18,11 +26,17 @@ function Todo() {
           <u>Todo App</u>
         </h1>
 
-        <input className={classes.input} />
+        <input className={classes.input} ref={textInput} />
         <br />
         <br />
-        <button className={classes.addTodoBttn}>Add Todo</button>
+        <button
+          className={classes.addTodoBttn}
+          onClick={() => addTodoHandler()}
+        >
+          Add Todo
+        </button>
         <br />
+
         {/* <small>*Let's start your day by making Todo's .</small> */}
       </div>
       <div className={classes.todoListDiv}>
@@ -30,8 +44,22 @@ function Todo() {
           {todos.map((index) => {
             return (
               <li className={classes.list}>
-                {index.Task} <span className={classes.deleteBttn}>🗑</span>
-                <span className={classes.editBttn}>✏</span>
+                {index}
+                <span
+                  className={classes.checked}
+                  onClick={completedTodoHandler}
+                >
+                  ✔
+                </span>
+                <span
+                  className={classes.deleteBttn}
+                  onClick={removeTodoHandler}
+                >
+                  🗑
+                </span>
+                <span className={classes.editBttn} onClick={editTodoHanlder}>
+                  ✏
+                </span>
               </li>
             );
           })}
