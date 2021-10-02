@@ -5,6 +5,7 @@ import classes from "./todo.module.css";
 function Todo() {
   const savedTodos = JSON.parse(localStorage.getItem("todos"));
   const [todos, setTodos] = useState(savedTodos || []);
+  const [editTodo, setEditTodo] = useState();
   const textInput = createRef();
 
   /**
@@ -23,8 +24,7 @@ function Todo() {
    * adding todo on key enter press
    */
   const addingTodoOnEnterKeypress = (e) => {
-    console.log(e.keycode);
-    if (e.keyCode === 13) {
+    if (e.key === "Enter") {
       addTodoHandler();
     }
   };
@@ -42,14 +42,21 @@ function Todo() {
   };
 
   /**
-   * checking if the user has completed the todo or not.
+   * editing todo on key press.
    */
-  const completedTodoHandler = () => {};
+  const editingTodoOnEnterKeypress = (e) => {
+    if (e.key === "Enter") {
+      addTodoHandler();
+    }
+  };
 
   /**
    * editing todo.
    */
-  const editTodoHanlder = () => {};
+  const editTodoHanlder = (task) => {
+    const editTask = task.target.id;
+    setEditTodo(editTask);
+  };
 
   /**
    * storing todos to local storage
@@ -92,13 +99,19 @@ function Todo() {
       </div>
       <div className={classes.todoListDiv}>
         <ol className={classes.orderList}>
-          {todos.map((task, element) => {
-            return (
+          {todos.map((task) => {
+            return editTodo === task.id ? (
+              <input
+                key={task.id}
+                className={classes.input}
+                onKeyPress={editingTodoOnEnterKeypress}
+              />
+            ) : (
               <li className={classes.list} key={task.id}>
                 {task.text}
                 <span
                   className={classes.checked}
-                  onClick={completedTodoHandler}
+                  // onClick={completedTodoHandler}
                 >
                   ✔
                 </span>
@@ -109,7 +122,11 @@ function Todo() {
                 >
                   🗑
                 </span>
-                <span className={classes.editBttn} onClick={editTodoHanlder}>
+                <span
+                  className={classes.editBttn}
+                  onClick={editTodoHanlder}
+                  id={task.id}
+                >
                   ✏
                 </span>
               </li>
