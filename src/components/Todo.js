@@ -1,21 +1,42 @@
-import React, { useState, createRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import classes from "./todo.module.css";
 
 function Todo() {
   const savedTodos = JSON.parse(localStorage.getItem("todos"));
   const [todos, setTodos] = useState(savedTodos || []);
-  const [editTodo, setEditTodo] = useState();
-  const textInput = createRef();
+  const [editTodo, setEditTodo] = useState({
+    id: undefined,
+    text: undefined,
+  });
+  const [newTodoText, setNewTodoText] = useState("");
 
   /**
    * adding todo through input field
    */
   const addTodoHandler = () => {
-    if (textInput.current.value === "") {
-      alert("Input field can't be empty");
+    if (newTodoText) {
+      setTodos([...todos, { id: uuidv4(), text: newTodoText }]);
+      setNewTodoText("");
     } else {
-      setTodos([...todos, { id: uuidv4(), text: textInput.current.value }]);
+      alert("Input field can't be empty");
+    }
+  };
+
+  /**
+   * editing todo on key press.
+   */
+  const editingTodoOnEnterKeypress = (e) => {
+    if (e.key === "Enter") {
+      const arr = todos.map((todo) =>
+        todo.id === editTodo.id ? { ...todo, text: editTodo.text } : todo
+      );
+      if (editTodo.text === "") {
+        alert("Input field can't be empty");
+      } else {
+        setTodos(arr);
+        setEditTodo({ id: undefined, text: undefined });
+      }
     }
   };
 
@@ -32,7 +53,6 @@ function Todo() {
   /**
    * removing todos
    */
-
   const removeTodoHandler = (item) => {
     const liToBeDel = item.target.id;
     const newTodo = todos.filter((task) => {
@@ -42,20 +62,10 @@ function Todo() {
   };
 
   /**
-   * editing todo on key press.
-   */
-  const editingTodoOnEnterKeypress = (e) => {
-    if (e.key === "Enter") {
-      addTodoHandler();
-    }
-  };
-
-  /**
    * editing todo.
    */
   const editTodoHanlder = (task) => {
-    const editTask = task.target.id;
-    setEditTodo(editTask);
+    setEditTodo(task);
   };
 
   /**
@@ -84,8 +94,9 @@ function Todo() {
 
         <input
           className={classes.input}
-          ref={textInput}
           onKeyPress={addingTodoOnEnterKeypress}
+          value={newTodoText}
+          onChange={(e) => setNewTodoText(e.target.value)}
         />
         <br />
         <br />
@@ -100,35 +111,40 @@ function Todo() {
       <div className={classes.todoListDiv}>
         <ol className={classes.orderList}>
           {todos.map((task) => {
-            return editTodo === task.id ? (
-              <input
-                key={task.id}
-                className={classes.input}
-                onKeyPress={editingTodoOnEnterKeypress}
-              />
+            return editTodo.id === task.id ? (
+              <li className={classes.list} key={task.id}>
+                <input
+                  className={classes.input}
+                  onKeyPress={editingTodoOnEnterKeypress}
+                  value={editTodo.text}
+                  onChange={(e) =>
+                    setEditTodo((prev) => ({
+                      ...prev,
+                      text: e.target.value,
+                    }))
+                  }
+                />
+                <button>Save</button>
+                <button>Cancel</button>
+              </li>
             ) : (
               <li className={classes.list} key={task.id}>
-                {task.text}
-                <span
-                  className={classes.checked}
-                  // onClick={completedTodoHandler}
-                >
-                  ✔
-                </span>
-                <span
-                  id={task.id}
-                  className={classes.deleteBttn}
-                  onClick={(e) => removeTodoHandler(e)}
-                >
-                  🗑
-                </span>
-                <span
-                  className={classes.editBttn}
-                  onClick={editTodoHanlder}
-                  id={task.id}
-                >
-                  ✏
-                </span>
+                <p className={classes.todoPara}>{task.text}</p>
+                <div>
+                  <span
+                    id={task.id}
+                    className={classes.deleteBttn}
+                    onClick={removeTodoHandler}
+                  >
+                    🗑
+                  </span>
+                  <span
+                    className={classes.editBttn}
+                    onClick={() => editTodoHanlder(task)}
+                  >
+                    ✏
+                  </span>
+                </div>
               </li>
             );
           })}
