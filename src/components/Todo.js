@@ -86,7 +86,7 @@ function Todo() {
   /**
    * Not Saving edited todo
    */
-  const doNotEditedTodoByBttn = () => {
+  const doNotSaveEditedTodoByBttn = () => {
     if (editTodo.text === "") {
       alert("Input field can't be empty");
     } else {
@@ -138,7 +138,7 @@ function Todo() {
         <ol className={classes.orderList}>
           {todos.map((task) => {
             return editTodo.id === task.id ? (
-              <li className={classes.list} key={task.id}>
+              <li className={classes.editedlist} key={task.id}>
                 <input
                   className={classes.input}
                   onKeyPress={editingTodoOnEnterKeypress}
@@ -150,8 +150,18 @@ function Todo() {
                     }))
                   }
                 />
-                <button onClick={saveEditedTodoByBttn}>Save</button>
-                <button onClick={doNotEditedTodoByBttn}>Cancel</button>
+                <button
+                  className={classes.saveBttn}
+                  onClick={saveEditedTodoByBttn}
+                >
+                  Save
+                </button>
+                <button
+                  className={classes.deleteBttn}
+                  onClick={doNotSaveEditedTodoByBttn}
+                >
+                  Delete
+                </button>
               </li>
             ) : (
               <li className={classes.list} key={task.id}>
@@ -159,7 +169,7 @@ function Todo() {
                 <div>
                   <span
                     id={task.id}
-                    className={classes.deleteBttn}
+                    className={classes.deleteIcon}
                     onClick={removeTodoHandler}
                   >
                     🗑
