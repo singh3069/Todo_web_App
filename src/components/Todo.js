@@ -12,7 +12,7 @@ function Todo() {
   const [newTodoText, setNewTodoText] = useState("");
 
   /**
-   * adding todo through input field
+   * adding todo new todo
    */
   const addTodoHandler = () => {
     if (newTodoText) {
@@ -24,7 +24,34 @@ function Todo() {
   };
 
   /**
-   * editing todo on key press.
+   * adding todo on key enter press
+   */
+  const addingTodoOnEnterKeypress = (e) => {
+    if (e.key === "Enter") {
+      addTodoHandler();
+    }
+  };
+
+  /**
+   * remove todos
+   */
+  const removeTodoHandler = (item) => {
+    const liToBeDel = item.target.id;
+    const newTodo = todos.filter((task) => {
+      return task.id !== liToBeDel;
+    });
+    setTodos(newTodo);
+  };
+
+  /**
+   * opens input box for todo editing
+   */
+  const editTodoHanlder = (task) => {
+    setEditTodo(task);
+  };
+
+  /**
+   * editing todo and setting it to localStorage on key press.
    */
   const editingTodoOnEnterKeypress = (e) => {
     if (e.key === "Enter") {
@@ -41,31 +68,30 @@ function Todo() {
   };
 
   /**
-   *
-   * adding todo on key enter press
+   * Saving edited todo onClick
    */
-  const addingTodoOnEnterKeypress = (e) => {
-    if (e.key === "Enter") {
-      addTodoHandler();
+
+  const saveEditedTodoByBttn = () => {
+    const arr = todos.map((todo) =>
+      todo.id === editTodo.id ? { ...todo, text: editTodo.text } : todo
+    );
+    if (editTodo.text === "") {
+      alert("Input field can't be empty");
+    } else {
+      setTodos(arr);
+      setEditTodo({ id: undefined, text: undefined });
     }
   };
 
   /**
-   * removing todos
+   * Not Saving edited todo
    */
-  const removeTodoHandler = (item) => {
-    const liToBeDel = item.target.id;
-    const newTodo = todos.filter((task) => {
-      return task.id !== liToBeDel;
-    });
-    setTodos(newTodo);
-  };
-
-  /**
-   * editing todo.
-   */
-  const editTodoHanlder = (task) => {
-    setEditTodo(task);
+  const doNotEditedTodoByBttn = () => {
+    if (editTodo.text === "") {
+      alert("Input field can't be empty");
+    } else {
+      setEditTodo({ id: undefined, text: undefined });
+    }
   };
 
   /**
@@ -124,8 +150,8 @@ function Todo() {
                     }))
                   }
                 />
-                <button>Save</button>
-                <button>Cancel</button>
+                <button onClick={saveEditedTodoByBttn}>Save</button>
+                <button onClick={doNotEditedTodoByBttn}>Cancel</button>
               </li>
             ) : (
               <li className={classes.list} key={task.id}>
